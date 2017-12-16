@@ -1,4 +1,6 @@
 import numpy as np
+import sys
+sys.setrecursionlimit(15000) 
 
 
 def knot_hash(s, lengths, start, skip):
@@ -75,7 +77,7 @@ def hash_to_bits(hash):
     bits = ""
     for x in hash:
         n = bin(int(x, 16))  # since this is a hex number
-        bits += n.split('b')[-1]
+        bits += n.split('b')[-1].zfill(4)
     return bits
 
 def part1(s):
@@ -87,6 +89,8 @@ def part1(s):
         hash = compute_hash(x)
         bits = hash_to_bits(hash)
 
+        assert len(bits) == 128
+        # print(bits)
         for j, b in enumerate(bits):
             if b == '1':
                 grid[i, j] = 1
@@ -94,67 +98,47 @@ def part1(s):
     print(grid.sum())
     return grid
 
-
-part1("flqrgnkx")
-
+# part1("flqrgnkx")
 
 def is_valid_coord(y, x, max=128):
     if x < 0 or y < 0 or x >= max or y >= max:
         return False
     return True
 
-def dfs(i, j, grid, region, idx):
+def flood_fill(i, j, val):
     if grid[i, j] == 0:
-        return region
-
+        return
     if region[i, j] > 0:
-        return region
+        return
 
-    region[i, j] = idx
+    region[i, j] = val
 
     if i > 0:
-        dfs(i-1, j, grid, region, idx)
+        flood_fill(i-1, j, val)
     if j > 0:
-        dfs(i, j-1, grid, region, idx)
+        flood_fill(i, j-1, val)
     if i < 127:
-        dfs(i+1, j, grid, region, idx)
+        flood_fill(i+1, j, val)
     if j < 127:
-        dfs(i, j+1, grid, region, idx)    
+        flood_fill(i, j+1, val)
 
 def part2(grid):
-    region_map = np.zeros(grid.shape)
-
     region_id = 0
 
     for i in range(grid.shape[0]):
         for j in range(grid.shape[1]):
             if grid[i, j] == 0:
                 continue
-            # this cell has already been assigned to a region
-            if region_map[i, j] > 0:
+            if region[i, j] > 0:
                 continue
 
             region_id += 1
-            dfs(i, j, grid, region_map, region_id)
-            # if grid[i, j] == 1:
-            #     if region_map[i, j] > 0:
-            #         continue
-
-            #     if is_valid_coord(i-1, j) and region_map[i-1, j] > 0:
-            #         region_map[i, j] = region_map[i-1, j]
-            #     elif is_valid_coord(i+1, j) and region_map[i+1, j] > 0:
-            #         region_map[i, j] = region_map[i+1, j]
-            #     elif is_valid_coord(i, j-1) and region_map[i, j-1] > 0:
-            #         region_map[i, j] = region_map[i, j-1]
-            #     elif is_valid_coord(i, j+1) and region_map[i, j+1] > 0:
-            #         region_map[i, j] = region_map[i, j+1]
-            #     else:
-            #         region_map[i, j] = region_id
-            #         region_id += 1
-
+            flood_fill(i, j, region_id)
+            
     print(grid[:8, :8])
-    print(region_map[:8, :8])
+    print(region[:8, :8])
     print(region_id)
 
 grid = part1("jzgqcdpd")
+region = np.zeros(grid.shape)
 part2(grid)

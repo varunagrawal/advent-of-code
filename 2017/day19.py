@@ -4,7 +4,7 @@ import string
 def is_valid(i, j, rows, cols):
     return i >= 0 and j >= 0 and i < rows and j < cols
 
-def part1(map):
+def part1_and_2(map):
     i, j = 0, 0
     # find the starting point
     for k, d in enumerate(map[i]):
@@ -73,4 +73,4 @@ def part1(map):
 with open("day19.in", 'r') as f:
     map = f.readlines()
 
-part1(map)
+part1_and_2(map)

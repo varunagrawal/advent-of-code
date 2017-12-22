@@ -88,9 +88,11 @@ c_map = parse_input(data)
 # print(map.shape)
 map = np.zeros((1000, 1000))
 map[500-c_map.shape[0]//2:500+c_map.shape[0]//2 + 1, 500-c_map.shape[1]//2:500+c_map.shape[1]//2 + 1] = c_map
-# print(map[500-c_map.shape[0]//2:500+c_map.shape[0]//2 + 1, 500-c_map.shape[1]//2:500+c_map.shape[1]//2 + 1])
-# part1(map)
 
-map = map*2  # since 2 is infected state
-# part2(map[500-c_map.shape[0]//2:500+c_map.shape[0]//2 + 1, 500-c_map.shape[1]//2:500+c_map.shape[1]//2 + 1])
+part1(map)
+
+# reinitialize map since part 1 updates the original map
+map = np.zeros((1000, 1000))
+map[500-c_map.shape[0]//2:500+c_map.shape[0]//2 + 1, 500-c_map.shape[1]//2:500+c_map.shape[1]//2 + 1] = c_map
+map = map*2
 part2(map)
